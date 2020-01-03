@@ -20,5 +20,6 @@ func (p *Pagination) SetTotalPage(total int32) *Pagination {
 		totalPages = int32(math.Ceil(d))
 	}
 	p.TotalPage = totalPages
+	p.TotalResult = total
 	return p
 }

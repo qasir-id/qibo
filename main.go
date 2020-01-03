@@ -26,7 +26,7 @@ func NewQuery(page int32, count int32, sort string, filter map[string]interface{
 
 // NewPagination initiate new pagination obj
 func NewPagination(q *Query, totalResult int32) *Pagination {
-	pageSize := totalResult
+	pageSize := int32(10)
 	currentPage := q.Page
 	if currentPage == 0 {
 		currentPage = defaultPage
@@ -37,10 +37,10 @@ func NewPagination(q *Query, totalResult int32) *Pagination {
 		pageSize = q.Count
 	}
 
-	p := &Pagination{
+	pagination := &Pagination{
 		CurrentPage: currentPage,
 		PageSize:    pageSize,
-		TotalResult: totalResult,
 	}
-	return p.SetTotalPage(totalResult)
+
+	return pagination.SetTotalPage(totalResult)
 }

@@ -1,17 +1,17 @@
 package qibo_test
 
 import (
-	"log"
+	"strings"
 	"testing"
 
 	"github.com/QasirID/qibo"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
+// Query struct for testing
 type Query struct {
 	suite.Suite
-	mock  mock.Mock
+	// mock  mock.Mock
 	query *qibo.Query
 }
 
@@ -20,19 +20,36 @@ func TestQuery(t *testing.T) {
 }
 
 func (t *Query) SetupTest() {
-	t.query = qibo.NewQuery(0, 0, "", map[string]interface{}{})
+	t.query = qibo.NewQuery(0, 0, "-name", map[string]interface{}{
+		"user_id$eq":     1,
+		"name$like":      "sample user",
+		"created_at$gte": "2018-12-01",
+		"created_at$lte": "2018-12-31",
+	})
 }
 
 // func (t *Query) AfterTest(_, _ string) {
 // 	require.NoError(t.T(), t.mock.ExpectationsWereMet())
 // }
 
-func (t *Query) TestQueryUser() {
-	t.query.SetFilter(map[string]interface{}{
-		"user_id$eq": 1,
-	})
+func (t *Query) TestFilter() {
 	smt, args := t.query.Where()
-	t.Require().Equal(smt, " user_id = ? ")
-	t.Require().Equal(args, []interface{}{1})
-	log.Println("Statement: ", smt, "Arguments: ", args)
+	wheresExpected := []string{"user_id = ?", "name LIKE ?", "created_at >= ?", "created_at <= ?"}
+	wheresActual := strings.Split(smt, " AND ")
+	t.Require().Equal(wheresActual, wheresExpected)
+	t.Require().Equal(args, []interface{}{1, "%sample user%", "2018-12-01 00:00:00", "2018-12-31 23:59:59"})
+}
+
+func (t *Query) TestOrder() {
+	orderExpected := "name DESC"
+	orderActual := t.query.Order()
+
+	t.Require().Equal(orderExpected, orderActual)
+}
+
+func (t *Query) TestLimitOffset() {
+	loExpected := "LIMIT 10 OFFSET 0"
+	loActual := t.query.LimitOffset()
+
+	t.Require().Equal(loExpected, loActual)
 }

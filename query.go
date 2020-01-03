@@ -1,10 +1,8 @@
 package qibo
 
 import (
-	"bytes"
 	"reflect"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -24,14 +22,16 @@ var Operator = map[string]string{
 	"ne":   "!=",
 	"gte":  ">=",
 	"lte":  "<=",
-	"like": "like",
-	"in":   "in",
+	"like": "LIKE",
+	"in":   "IN",
 }
 
+// SetFilter to replace filters
 func (q *Query) SetFilter(filter map[string]interface{}) {
 	q.Filter = filter
 }
 
+// GetFilter to get list of existing filters
 func (q *Query) GetFilter() map[string]interface{} {
 	return q.Filter
 }
@@ -47,9 +47,9 @@ func (q *Query) GetFilter() map[string]interface{} {
 // 		WHERE amount >= 19200.00
 //		AND status = 1
 func (q *Query) Where() (string, []interface{}) {
-	query := new(bytes.Buffer)
+	var wheres []string
 	var args []interface{}
-	i := 0
+
 	for k, v := range q.Filter {
 		var validDate = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}$`)
 		fields := strings.Split(k, "$")
@@ -58,74 +58,36 @@ func (q *Query) Where() (string, []interface{}) {
 			return s[len(s)-1:] == "!"
 		}(fields[1])
 		opr := translateOperator(strings.TrimSuffix(fields[1], "!"))
-
-		if i == 0 {
-			if isRequire || !IsArgNil(v) {
-				switch opr {
-				case Operator["like"]:
-					query.WriteString(` ` + columnName + ` ` + opr + ` ?`)
-					tmpArgs, _ := v.(string)
-					args = append(args, "%"+tmpArgs+"%")
-				case Operator["in"]:
-					query.WriteString(` ` + columnName + ` ` + opr + ` (?) `)
-					args = append(args, v)
-				case Operator["lte"]:
-					tmpArgs, _ := v.(string)
-					if validDate.MatchString(tmpArgs) {
-						tmpArgs += " 23:59:59"
-					}
-					query.WriteString(` ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, tmpArgs)
-				case Operator["gte"]:
-					tmpArgs, _ := v.(string)
-					if validDate.MatchString(tmpArgs) {
-						tmpArgs += " 00:00:00"
-					}
-					query.WriteString(` ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, tmpArgs)
-				default:
-					query.WriteString(` ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, v)
+		if isRequire || !IsArgNil(v) {
+			switch opr {
+			case Operator["like"]:
+				wheres = append(wheres, columnName+` `+opr+` ?`)
+				tmpArgs, _ := v.(string)
+				args = append(args, "%"+tmpArgs+"%")
+			case Operator["in"]:
+				wheres = append(wheres, columnName+` `+opr+` (?)`)
+				args = append(args, v)
+			case Operator["lte"]:
+				wheres = append(wheres, columnName+` `+opr+` ?`)
+				tmpArgs, _ := v.(string)
+				if validDate.MatchString(tmpArgs) {
+					tmpArgs += " 23:59:59"
 				}
-			} else {
-				query.WriteString(` 1 = 1 `)
-			}
-
-		} else {
-			if isRequire || !IsArgNil(v) {
-				switch opr {
-				case Operator["like"]:
-					query.WriteString(` AND ` + columnName + ` ` + opr + ` ? `)
-					tmpArgs, _ := v.(string)
-					args = append(args, "%"+tmpArgs+"%")
-				case Operator["in"]:
-					query.WriteString(` AND ` + columnName + ` ` + opr + ` (?) `)
-					args = append(args, v)
-				case Operator["lte"]:
-					tmpArgs, _ := v.(string)
-					if validDate.MatchString(tmpArgs) {
-						tmpArgs += " 23:59:59"
-					}
-					query.WriteString(` AND ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, tmpArgs)
-				case Operator["gte"]:
-					tmpArgs, _ := v.(string)
-					if validDate.MatchString(tmpArgs) {
-						tmpArgs += " 00:00:00"
-					}
-					query.WriteString(` AND ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, tmpArgs)
-				default:
-					query.WriteString(` AND ` + columnName + ` ` + opr + ` ? `)
-					args = append(args, v)
+				args = append(args, tmpArgs)
+			case Operator["gte"]:
+				wheres = append(wheres, columnName+` `+opr+` ?`)
+				tmpArgs, _ := v.(string)
+				if validDate.MatchString(tmpArgs) {
+					tmpArgs += " 00:00:00"
 				}
-			} else {
-				query.WriteString(` AND 1 = 1 `)
+				args = append(args, tmpArgs)
+			default:
+				wheres = append(wheres, columnName+` `+opr+` ?`)
+				args = append(args, v)
 			}
 		}
-		i++
 	}
-	return query.String(), args
+	return strings.Join(wheres, " AND "), args
 }
 
 // Order generate string ordering query statement
@@ -136,9 +98,9 @@ func (q *Query) Order() string {
 		for _, v := range field {
 			sortType := func(str string) string {
 				if strings.HasPrefix(str, "-") {
-					return `desc`
+					return `DESC`
 				}
-				return `asc`
+				return `ASC`
 			}
 			sort += strings.TrimPrefix(v, "-") + ` ` + sortType(v) + `,`
 		}
@@ -149,7 +111,7 @@ func (q *Query) Order() string {
 
 // Limit get limit
 func (q *Query) Limit() int32 {
-	return q.Count + 1
+	return q.Count
 }
 
 // Offset get Offset
@@ -157,11 +119,11 @@ func (q *Query) Offset() int32 {
 	return (q.Page - 1) * q.Count
 }
 
-// Limit generate limit and offset for pagination
+// LimitOffset generate limit and offset for pagination
 func (q *Query) LimitOffset() string {
-	l := strconv.Itoa(int(q.Count + 1))
-	o := strconv.Itoa((int(q.Page - 1)) * int(q.Count))
-	return ` LIMIT ` + l + ` OFFSET ` + o
+	l := Int32ToString(q.Limit())
+	o := Int32ToString(q.Offset())
+	return `LIMIT ` + l + ` OFFSET ` + o
 }
 
 func translateOperator(s string) string {
