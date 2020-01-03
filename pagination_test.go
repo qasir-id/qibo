@@ -3,7 +3,7 @@ package qibo_test
 import (
 	"testing"
 
-	"github.com/QasirID/qibo"
+	"github.com/qasir-id/qibo"
 	"github.com/stretchr/testify/suite"
 )
 

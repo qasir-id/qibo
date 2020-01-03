@@ -14,7 +14,7 @@ go mod tidy
 ## Basic Usage
 
 ```go
-import "github.com/QasirID/qibo"
+import "github.com/qasir-id/qibo"
 import "github.com/jinzhu/gorm"
 
 query := qibo.NewQuery(0, 0, "name" {

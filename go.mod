@@ -1,4 +1,4 @@
-module github.com/QasirID/qibo
+module github.com/qasir-id/qibo
 
 go 1.13
 
