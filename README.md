@@ -1,6 +1,6 @@
 # Qibo
 
-[![Build Status](https://travis-ci.com/QasirID/qibo.svg?branch=master)](https://travis-ci.com/QasirID/qibo)
+[![Build Status](https://travis-ci.com/qasir-id/qibo.svg?branch=master)](https://travis-ci.com/qasir-id/qibo)
 
 Qibo is query builder for [Go](https://golang.org/) which is used internally by [Qasir](https://www.qasir.id/) Tech.
 
