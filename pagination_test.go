@@ -19,10 +19,7 @@ func TestPagination(t *testing.T) {
 }
 
 func (t *Pagination) SetupTest() {
-	query := qibo.NewQuery(0, 0, "", map[string]interface{}{
-		"user_id$eq": 1,
-	})
-	t.Pagination = qibo.NewPagination(query, 32)
+	t.Pagination = qibo.NewPagination(1, 10)
 }
 
 func (t *Pagination) TestTotalPage() {
@@ -35,4 +32,11 @@ func (t *Pagination) TestTotalPage() {
 	pActual := t.Pagination.SetTotalPage(240)
 	t.Require().Equal(pExpected, pActual)
 	// log.Println("Statement: ", smt, "Arguments: ", args)
+}
+
+func (t *Pagination) TestLimitOffset() {
+	loExpected := "LIMIT 10 OFFSET 0"
+	loActual := t.Pagination.LimitOffset()
+
+	t.Require().Equal(loExpected, loActual)
 }

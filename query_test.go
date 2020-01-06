@@ -46,10 +46,3 @@ func (t *Query) TestOrder() {
 
 	t.Require().Equal(orderExpected, orderActual)
 }
-
-func (t *Query) TestLimitOffset() {
-	loExpected := "LIMIT 10 OFFSET 0"
-	loActual := t.query.LimitOffset()
-
-	t.Require().Equal(loExpected, loActual)
-}

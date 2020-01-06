@@ -7,16 +7,7 @@ const (
 
 // NewQuery clone to a new query builder with initial value
 func NewQuery(page int32, count int32, sort string, filter map[string]interface{}) *Query {
-	var p, c int32
-	if page == 0 {
-		p = defaultPage
-	}
-	if count == 0 {
-		c = defaultCount
-	}
 	query := &Query{
-		Page:   p,
-		Count:  c,
 		Sort:   sort,
 		Filter: filter,
 	}
@@ -25,22 +16,26 @@ func NewQuery(page int32, count int32, sort string, filter map[string]interface{
 }
 
 // NewPagination initiate new pagination obj
-func NewPagination(q *Query, totalResult int32) *Pagination {
-	pageSize := int32(10)
-	currentPage := q.Page
-	if currentPage == 0 {
-		currentPage = defaultPage
+func NewPagination(page int32, count int32) *Pagination {
+	var p, c int32
+	if page == 0 {
+		p = defaultPage
+	} else if page > 0 {
+		p = page
 	}
-	if q.Count == 0 {
-		pageSize = defaultCount
-	} else if q.Count > 0 {
-		pageSize = q.Count
+
+	if count == 0 {
+		c = defaultCount
+	} else if count > 0 {
+		c = count
 	}
 
 	pagination := &Pagination{
-		CurrentPage: currentPage,
-		PageSize:    pageSize,
+		CurrentPage: p,
+		PageSize:    c,
+		TotalResult: 0,
+		TotalPage:   0,
 	}
 
-	return pagination.SetTotalPage(totalResult)
+	return pagination
 }

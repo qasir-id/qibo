@@ -23,3 +23,20 @@ func (p *Pagination) SetTotalPage(total int32) *Pagination {
 	p.TotalResult = total
 	return p
 }
+
+// Limit get limit
+func (p *Pagination) Limit() int32 {
+	return p.PageSize
+}
+
+// Offset get Offset
+func (p *Pagination) Offset() int32 {
+	return (p.CurrentPage - 1) * p.PageSize
+}
+
+// LimitOffset generate limit and offset for pagination
+func (p *Pagination) LimitOffset() string {
+	l := Int32ToString(p.Limit())
+	o := Int32ToString(p.Offset())
+	return `LIMIT ` + l + ` OFFSET ` + o
+}

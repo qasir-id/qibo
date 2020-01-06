@@ -8,8 +8,6 @@ import (
 
 // Query struct binder for default query param
 type Query struct {
-	Page   int32  `json:"page"`
-	Count  int32  `json:"count"`
 	Sort   string `json:"sort"`
 	Filter map[string]interface{}
 }
@@ -107,23 +105,6 @@ func (q *Query) Order() string {
 		return sort[:len(sort)-1]
 	}
 	return ``
-}
-
-// Limit get limit
-func (q *Query) Limit() int32 {
-	return q.Count
-}
-
-// Offset get Offset
-func (q *Query) Offset() int32 {
-	return (q.Page - 1) * q.Count
-}
-
-// LimitOffset generate limit and offset for pagination
-func (q *Query) LimitOffset() string {
-	l := Int32ToString(q.Limit())
-	o := Int32ToString(q.Offset())
-	return `LIMIT ` + l + ` OFFSET ` + o
 }
 
 func translateOperator(s string) string {
