@@ -1,7 +1,6 @@
 package qibo
 
 import (
-	"reflect"
 	"regexp"
 	"strings"
 )
@@ -113,27 +112,4 @@ func translateOperator(s string) string {
 		return Operator["eq"]
 	}
 	return operator
-}
-
-// IsArgNil check type is null
-func IsArgNil(i interface{}) bool {
-	r := reflect.ValueOf(i)
-	switch r.Kind() {
-	case reflect.Slice:
-		return r.Len() == 0
-	case reflect.String:
-		return r.String() == ""
-	case reflect.Int:
-		return r.Int() == 0
-	case reflect.Int32:
-		return r.Int() == 0
-	case reflect.Int64:
-		return r.Int() == 0
-	case reflect.Float32:
-		return r.Float() == 0
-	case reflect.Float64:
-		return r.Float() == 0
-	default:
-		return false
-	}
 }
