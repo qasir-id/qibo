@@ -6,7 +6,7 @@ const (
 )
 
 // NewQuery clone to a new query builder with initial value
-func NewQuery(page int32, count int32, sort string, filter map[string]interface{}) *Query {
+func NewQuery(sort string, filter map[string]interface{}) *Query {
 	query := &Query{
 		Sort:   sort,
 		Filter: filter,

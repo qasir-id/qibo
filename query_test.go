@@ -20,7 +20,7 @@ func TestQuery(t *testing.T) {
 }
 
 func (t *Query) SetupTest() {
-	t.query = qibo.NewQuery(0, 0, "-name", map[string]interface{}{
+	t.query = qibo.NewQuery("-name", map[string]interface{}{
 		"user_id$eq":     1,
 		"name$like":      "sample user",
 		"created_at$gte": "2018-12-01",
