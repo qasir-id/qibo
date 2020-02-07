@@ -82,7 +82,10 @@ func (q *Query) Where() (string, []interface{}) {
 				wheres = append(wheres, columnName+` `+opr+` ?`)
 				args = append(args, v)
 			}
+		} else {
+			wheres = append(wheres, ` 1 = 1 `)
 		}
+
 	}
 	return strings.Join(wheres, " AND "), args
 }
