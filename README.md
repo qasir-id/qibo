@@ -8,8 +8,23 @@ Qibo is query builder for [Go](https://golang.org/) which is used internally by 
 
 ```
 # Go modules
-go mod tidy
+$> go get -u github.com/qasir-id/qibo
+$> go mod tidy
 ```
+
+## String Query Operators
+| Code   | Sql operator | Description |
+| ------ | ------ | ------ |
+| "gt" |   ">" | greater than |
+| "lt" |   "<" | lower then |
+| "eq" |   "=" | equal |
+| "ne" |   "!=" | not equal |
+| "gte" |  ">=" | greater than equal |
+| "lte" |  "<=" | lower then |
+| "like" | "LIKE" | like / contains |
+| "in" |   "IN" | array |
+
+use 
 
 ## Basic Usage
 
@@ -18,7 +33,7 @@ import "github.com/qasir-id/qibo"
 import "github.com/jinzhu/gorm"
 
 query := qibo.NewQuery(0, 0, "name" {
-	"id$in!":  	        []int{23, 25},
+	"id$in!":  	        []int{23, 25}, // mandatory filter
 	"name$like":        "Sample name",
 	"description$like": "Sample description",
 	"created_at$gte":   "2019-12-01",
