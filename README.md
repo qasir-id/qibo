@@ -24,6 +24,13 @@ $> go mod tidy
 | "like" | "LIKE" | like / contains |
 | "in" |   "IN" | array |
 
+## Sort
+| Code   | Sql operator | Description |
+| ------ | ------ | ------ |
+| "-" |   "DESC" | Descending |
+| " " |   "ASC" | Ascending |
+
+
 use 
 
 ## Basic Usage
@@ -32,7 +39,8 @@ use
 import "github.com/qasir-id/qibo"
 import "github.com/jinzhu/gorm"
 
-query := qibo.NewQuery(0, 0, "name" {
+
+query := qibo.NewQuery(0, 0, "-name" { // sort by name descending
 	"id$in!":  	        []int{23, 25}, // mandatory filter
 	"name$like":        "Sample name",
 	"description$like": "Sample description",
