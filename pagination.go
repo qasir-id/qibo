@@ -39,7 +39,6 @@ func (p *Pagination) LimitOffset() string {
 	if p.PageSize < 0 {
 		return ""
 	}
-
 	l := Int32ToString(p.Limit())
 	o := Int32ToString(p.Offset())
 	return `LIMIT ` + l + ` OFFSET ` + o
