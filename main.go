@@ -28,6 +28,8 @@ func NewPagination(page int32, count int32) *Pagination {
 		c = defaultCount
 	} else if count > 0 {
 		c = count
+	}else if count < 0{
+		c = count
 	}
 
 	pagination := &Pagination{
