@@ -13,14 +13,15 @@ type Query struct {
 
 // Operator string translation
 var Operator = map[string]string{
-	"gt":   ">",
-	"lt":   "<",
-	"eq":   "=",
-	"ne":   "!=",
-	"gte":  ">=",
-	"lte":  "<=",
-	"like": "LIKE",
-	"in":   "IN",
+	"gt":    ">",
+	"lt":    "<",
+	"eq":    "=",
+	"ne":    "!=",
+	"gte":   ">=",
+	"lte":   "<=",
+	"like":  "LIKE",
+	"in":    "IN",
+	"notin": "NOT IN",
 }
 
 // SetFilter to replace filters
@@ -34,15 +35,20 @@ func (q *Query) GetFilter() map[string]interface{} {
 }
 
 // Where generate sql WHERE statement ,with format
-//		key :"{columnName}{$operator}"
-//		value : interface
+//
+//	key :"{columnName}{$operator}"
+//	value : interface
+//
 // with default operator value "$eq"
 // for example :
-//     "amount$gte": 19200.00
-// 	   "status": 1
+//
+//	    "amount$gte": 19200.00
+//		   "status": 1
+//
 // will be translated into sql format :
-// 		WHERE amount >= 19200.00
-//		AND status = 1
+//
+//	WHERE amount >= 19200.00
+//	AND status = 1
 func (q *Query) Where() (string, []interface{}) {
 	var wheres []string
 	var args []interface{}
@@ -61,7 +67,7 @@ func (q *Query) Where() (string, []interface{}) {
 				wheres = append(wheres, columnName+` `+opr+` ?`)
 				tmpArgs, _ := v.(string)
 				args = append(args, "%"+tmpArgs+"%")
-			case Operator["in"]:
+			case Operator["in"], Operator["notin"]:
 				wheres = append(wheres, columnName+` `+opr+` (?)`)
 				args = append(args, v)
 			case Operator["lte"]:

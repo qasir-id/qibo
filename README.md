@@ -13,16 +13,17 @@ $> go mod tidy
 ```
 
 ## String Query Operators
-| Code   | Sql operator | Description |
-| ------ | ------ | ------ |
-| "gt" |   ">" | greater than |
-| "lt" |   "<" | lower then |
-| "eq" |   "=" | equal |
-| "ne" |   "!=" | not equal |
-| "gte" |  ">=" | greater than equal |
-| "lte" |  "<=" | lower then |
-| "like" | "LIKE" | like / contains |
-| "in" |   "IN" | array |
+| Code    | Sql operator | Description |
+|---------|--------------| ------ |
+| "gt"    | ">"          | greater than |
+| "lt"    | "<"          | lower then |
+| "eq"    | "="          | equal |
+| "ne"    | "!="         | not equal |
+| "gte"   | ">="         | greater than equal |
+| "lte"   | "<="         | lower then |
+| "like"  | "LIKE"       | like / contains |
+| "in"    | "IN"         | array |
+| "notin" | "NOT IN"     | array |
 
 ## Sort
 | Code   | Sql operator | Description |
